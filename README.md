@@ -1,6 +1,6 @@
 pdfjs-broker
 ---
-CLI-oneline-tool which opens a pdf file specified by command line argument in the form of URI with pdf.js.
+CLI-tool which opens a pdf file specified by command line argument in the form of URI with pdf.js.
 
 # Requirements
 - docker environment
