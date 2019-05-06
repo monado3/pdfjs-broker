@@ -11,3 +11,6 @@ CLI-oneline-tool which opens a pdf file specified by command line argument in th
 1. Add $BROWSER={your browser you want to use for reading pdf} to environment variable
 
 # Usage
+`$ ./broker.py {URL of pdf file you want to read}`
+
+*I recommend setting the alias to `broker.py`*
