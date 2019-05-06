@@ -16,4 +16,3 @@ WORKDIR pdfjs
 ADD ./main.sh /
 
 ENTRYPOINT [ "/main.sh" ]
-CMD []

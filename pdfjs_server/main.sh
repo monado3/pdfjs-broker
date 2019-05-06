@@ -4,9 +4,7 @@ cd /pdfjs
 wget "$@" -O web/downloaded.pdf > /dev/null 2>&1
 
 if [ $? -gt 0 ]; then
-    echo 'failure'
-else
-    echo 'success'
+    exit 1
 fi
 
 php -S 0.0.0.0:8080 > /dev/null 2>&1
