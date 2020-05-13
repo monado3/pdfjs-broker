@@ -9,7 +9,7 @@ CLI-tool which opens a pdf file specified by command line argument in the form o
 1. `$ git clone {this repository}`
 1. `$ cd pdfjs_server && docker build -t pdfjs .`
 1. Add $BROWSER={your browser you want to use for reading pdf} to environment variable
-1. `$ ln -s {foo/broker.py} /usr/local/bin/pdfjs
+1. `$ ln -s {/foo/broker.py} /usr/local/bin/pdfjs
 
 # Usage
 `$ ./broker.py {URL of pdf file you want to read}`
