@@ -13,15 +13,20 @@ def is_free(port_n: int) -> bool:
     except OSError:
         return False
 
+
 def search_min_open_port(n_min: int):
     for i in range(n_min, 60000):
         if is_free(i):
             return i
 
 
-def exec_pdfjs_ctn(pdf_url:str, n_port:int):
-    proc = subp.Popen(['docker', 'run', '-itd', '--rm', '-p', f'{n_port}:8080', 'pdfjs', pdf_url], stdout=subp.DEVNULL, stderr=subp.DEVNULL)
+def exec_pdfjs_ctn_url(pdf_url:str, n_port:int):
+    proc = subp.Popen(['docker', 'run', '-itd', '--rm', '-p', f'{n_port}:8080', 'pdfjs_url', pdf_url], stdout=subp.DEVNULL, stderr=subp.DEVNULL)
 
+
+def exec_pdfjs_ctn_file(pdf_path:str, n_port:int):
+    proc = subp.Popen(['docker', 'run', '-itd', '--rm', '-p', f'{n_port}:8080', 'pdfjs_file'], stdout=subp.DEVNULL, stderr=subp.DEVNULL)
+    proc = subp.Popen(['docker', 'cp'])
 
 def init_argparser():
     parser = argparse.ArgumentParser(
@@ -53,7 +58,7 @@ if __name__ == '__main__':
     n_port = search_min_open_port(50000)
     if args.url:
         url = args.url
-        exec_pdfjs_ctn(url, n_port)
+        exec_pdfjs_ctn_url(url, n_port)
         subp.run(f'$BROWSER http://localhost:{n_port}/web/viewer.html?file=downloaded.pdf', shell=True, stdout=subp.DEVNULL, stderr=subp.DEVNULL)
     else:
-        path = args.url
+        path = args.path
