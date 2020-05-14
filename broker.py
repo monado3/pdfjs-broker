@@ -2,7 +2,8 @@
 import argparse
 import socket
 import subprocess as subp
-import sys
+
+from pathlib import Path
 
 def is_free(port_n: int) -> bool:
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -14,24 +15,28 @@ def is_free(port_n: int) -> bool:
         return False
 
 
-def search_min_open_port(n_min: int):
+def search_min_open_port(n_min: int) -> int:
     for i in range(n_min, 60000):
         if is_free(i):
             return i
 
 
 def exec_pdfjs_ctn_url(pdf_url:str, n_port:int):
-    proc = subp.Popen(['docker', 'run', '-itd', '--rm', '-p', f'{n_port}:8080', 'pdfjs_url', pdf_url], stdout=subp.DEVNULL, stderr=subp.DEVNULL)
+    proc = subp.Popen(['docker', 'run', '-itd', '--rm', '-p', f'{n_port}:8080', '--name', f'pdfjs_{n_port}', 'pdfjs_url', pdf_url], stdout=subp.DEVNULL, stderr=subp.DEVNULL)
 
 
 def exec_pdfjs_ctn_file(pdf_path:str, n_port:int):
-    proc = subp.Popen(['docker', 'run', '-itd', '--rm', '-p', f'{n_port}:8080', 'pdfjs_file'], stdout=subp.DEVNULL, stderr=subp.DEVNULL)
-    proc = subp.Popen(['docker', 'cp'])
+    ctn_name = f'pdfjs_{n_port}'
+    proc = subp.Popen(
+        ['docker', 'run', '-itd', '--rm', '-p', f'{n_port}:8080', '-v', f'{pdf_path}:/pdfjs/web/downloaded.pdf', '--name', ctn_name, 'pdfjs_file'],
+        stdout=subp.DEVNULL,
+        stderr=subp.DEVNULL
+    )
 
 def init_argparser():
     parser = argparse.ArgumentParser(
         prog='broker.py',
-        usage='pdfjs [-u <URL>] [-f <filepath>]',
+        usage='pdfjs [-u <URL> | -f <filepath>]',
         description='Open a pdf in a broweser by pdfjs',
         add_help=True,
         )
@@ -59,6 +64,7 @@ if __name__ == '__main__':
     if args.url:
         url = args.url
         exec_pdfjs_ctn_url(url, n_port)
-        subp.run(f'$BROWSER http://localhost:{n_port}/web/viewer.html?file=downloaded.pdf', shell=True, stdout=subp.DEVNULL, stderr=subp.DEVNULL)
     else:
-        path = args.path
+        filepath = (Path.cwd() / args.path).resolve()
+        exec_pdfjs_ctn_file(str(filepath), n_port)        
+    subp.run(f'$BROWSER http://localhost:{n_port}/web/viewer.html?file=downloaded.pdf', shell=True, stdout=subp.DEVNULL, stderr=subp.DEVNULL)
