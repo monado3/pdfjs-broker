@@ -16,3 +16,7 @@ CLI-tool which opens a pdf file specified by command line argument in the form o
 
 # Usage
 `$ pdfjs [-u <URL of a pdf file> | -f <pdf file path>]`
+
+# Versions
+- If you run this in wsl environment, you should use wsl branch version
+
