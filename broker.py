@@ -34,12 +34,8 @@ def exec_pdfjs_ctn_url(pdf_url: str, n_port: int):
 
 def exec_pdfjs_ctn_file(pdf_path: str, n_port: int):
     ctn_name = f'pdfjs_{n_port}'
-    proc = subp.Popen(
-        ['docker', 'run', '-itd', '--rm', '-p',
-            f'{n_port}:8080', '-v', f'{pdf_path}:/pdfjs/web/downloaded.pdf', '--name', ctn_name, 'pdfjs_file'],
-        stdout=subp.DEVNULL,
-        stderr=subp.DEVNULL
-    )
+    proc = subp.run(['docker', 'run', '-itd', '--rm', '-p', f'{n_port}:8080', '-v', f'{pdf_path}:/pdfjs/web/downloaded.pdf', '--name', ctn_name, 'pdfjs_file'],
+                    stdout=subp.DEVNULL, check=True)
 
 
 def init_argparser():
@@ -79,7 +75,7 @@ if __name__ == '__main__':
         exec_pdfjs_ctn_file(str(filepath), n_port)
     if is_wsl():
         subp.run(f'wslview http://localhost:{n_port}/web/viewer.html?file=downloaded.pdf',
-                 shell=True, stdout=subp.DEVNULL, stderr=subp.DEVNULL)
+                 shell=True, check=True)
     else:
         subp.run(f'$BROWSER http://localhost:{n_port}/web/viewer.html?file=downloaded.pdf',
-                 shell=True, stdout=subp.DEVNULL, stderr=subp.DEVNULL)
+                 shell=True, check=True)
