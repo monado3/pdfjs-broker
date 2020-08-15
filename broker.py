@@ -6,6 +6,11 @@ import subprocess as subp
 from pathlib import Path
 
 
+def is_wsl() -> bool:
+    p = Path('/proc/sys/fs/binfmt_misc/WSLInterop')
+    return p.exists()
+
+
 def is_free(port_n: int) -> bool:
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
@@ -69,8 +74,12 @@ if __name__ == '__main__':
     if args.url:
         url = args.url
         exec_pdfjs_ctn_url(url, n_port)
-    else:
+    if args.path:
         filepath = (Path.cwd() / args.path).resolve()
         exec_pdfjs_ctn_file(str(filepath), n_port)
-    subp.run(f'$BROWSER http://localhost:{n_port}/web/viewer.html?file=downloaded.pdf',
-             shell=True, stdout=subp.DEVNULL, stderr=subp.DEVNULL)
+    if is_wsl():
+        subp.run(f'wslview http://localhost:{n_port}/web/viewer.html?file=downloaded.pdf',
+                 shell=True, stdout=subp.DEVNULL, stderr=subp.DEVNULL)
+    else:
+        subp.run(f'$BROWSER http://localhost:{n_port}/web/viewer.html?file=downloaded.pdf',
+                 shell=True, stdout=subp.DEVNULL, stderr=subp.DEVNULL)
