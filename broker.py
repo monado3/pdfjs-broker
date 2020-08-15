@@ -28,8 +28,9 @@ def search_min_open_port(n_min: int) -> int:
 
 
 def exec_pdfjs_ctn_url(pdf_url: str, n_port: int):
-    proc = subp.Popen(['docker', 'run', '-itd', '--rm', '-p',
-                       f'{n_port}:8080', '--name', f'pdfjs_{n_port}', 'pdfjs_url', pdf_url], stdout=subp.DEVNULL, stderr=subp.DEVNULL)
+    ctn_name = f'pdfjs_{n_port}'
+    proc = subp.run(['docker', 'run', '-itd', '--rm', '-p', f'{n_port}:8080', '--name', ctn_name, 'pdfjs_url', pdf_url],
+                    stdout=subp.DEVNULL, check=True)
 
 
 def exec_pdfjs_ctn_file(pdf_path: str, n_port: int):
