@@ -5,6 +5,7 @@ import subprocess as subp
 
 from pathlib import Path
 
+
 def is_free(port_n: int) -> bool:
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
@@ -21,17 +22,20 @@ def search_min_open_port(n_min: int) -> int:
             return i
 
 
-def exec_pdfjs_ctn_url(pdf_url:str, n_port:int):
-    proc = subp.Popen(['docker', 'run', '-itd', '--rm', '-p', f'{n_port}:8080', '--name', f'pdfjs_{n_port}', 'pdfjs_url', pdf_url], stdout=subp.DEVNULL, stderr=subp.DEVNULL)
+def exec_pdfjs_ctn_url(pdf_url: str, n_port: int):
+    proc = subp.Popen(['docker', 'run', '-itd', '--rm', '-p',
+                       f'{n_port}:8080', '--name', f'pdfjs_{n_port}', 'pdfjs_url', pdf_url], stdout=subp.DEVNULL, stderr=subp.DEVNULL)
 
 
-def exec_pdfjs_ctn_file(pdf_path:str, n_port:int):
+def exec_pdfjs_ctn_file(pdf_path: str, n_port: int):
     ctn_name = f'pdfjs_{n_port}'
     proc = subp.Popen(
-        ['docker', 'run', '-itd', '--rm', '-p', f'{n_port}:8080', '-v', f'{pdf_path}:/pdfjs/web/downloaded.pdf', '--name', ctn_name, 'pdfjs_file'],
+        ['docker', 'run', '-itd', '--rm', '-p',
+            f'{n_port}:8080', '-v', f'{pdf_path}:/pdfjs/web/downloaded.pdf', '--name', ctn_name, 'pdfjs_file'],
         stdout=subp.DEVNULL,
         stderr=subp.DEVNULL
     )
+
 
 def init_argparser():
     parser = argparse.ArgumentParser(
@@ -39,7 +43,7 @@ def init_argparser():
         usage='pdfjs [-u <URL> | -f <filepath>]',
         description='Open a pdf in a broweser by pdfjs',
         add_help=True,
-        )
+    )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
         '-u', '--url',
@@ -57,6 +61,7 @@ def init_argparser():
     )
     return parser
 
+
 if __name__ == '__main__':
     parser = init_argparser()
     args = parser.parse_args()
@@ -66,5 +71,6 @@ if __name__ == '__main__':
         exec_pdfjs_ctn_url(url, n_port)
     else:
         filepath = (Path.cwd() / args.path).resolve()
-        exec_pdfjs_ctn_file(str(filepath), n_port)        
-    subp.run(f'$BROWSER http://localhost:{n_port}/web/viewer.html?file=downloaded.pdf', shell=True, stdout=subp.DEVNULL, stderr=subp.DEVNULL)
+        exec_pdfjs_ctn_file(str(filepath), n_port)
+    subp.run(f'$BROWSER http://localhost:{n_port}/web/viewer.html?file=downloaded.pdf',
+             shell=True, stdout=subp.DEVNULL, stderr=subp.DEVNULL)
